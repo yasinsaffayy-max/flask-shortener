@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="text-center py-5">
+    <h1 class="display-3 fw-bold text-primary">
+        <i class="bi bi-link-45deg"></i> Sho.rt
+    </h1>
+    <p class="lead text-muted">لینک‌های طولانی رو کوتاه کن، آمارش رو ببین</p>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-lg border-0">
+            <div class="card-body p-4">
+                <form method="POST" action="{{ url_for('link.create') }}">
+                    {{ form.hidden_tag() }}
+
+                    <div class="mb-3">
+                        {{ form.original_url.label(class="form-label fw-bold") }}
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-text"><i class="bi bi-globe"></i></span>
+                            {{ form.original_url(class="form-control" + (" is-invalid" if form.original_url.errors else ""),
+                                placeholder="https://example.com/very/long/url...") }}
+                            {% for e in form.original_url.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.title.label(class="form-label") }}
+                            {{ form.title(class="form-control", placeholder="مثلاً: پست وبلاگم") }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form.expires_days.label(class="form-label") }}
+                            {{ form.expires_days(class="form-control", placeholder="خالی = بدون انقضا") }}
+                        </div>
+                    </div>
+
+                    {{ form.submit(class="btn btn-primary btn-lg w-100") }}
+                </form>
+
+                {% if not current_user.is_authenticated %}
+                    <p class="text-center mt-3 mb-0 small text-muted">
+                        مهمان‌ها می‌تونن روزی ۵ لینک بسازن.
+                        <a href="{{ url_for('auth.register') }}">ثبت‌نام کن</a> تا نامحدود بشه!
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row g-3 mt-4">
+            <div class="col-md-4 text-center">
+                <i class="bi bi-lightning-charge-fill text-warning" style="font-size: 2.5rem;"></i>
+                <h6 class="mt-2">سریع</h6>
+                <small class="text-muted">در ۱ ثانیه لینک بساز</small>
+            </div>
+            <div class="col-md-4 text-center">
+                <i class="bi bi-bar-chart-fill text-success" style="font-size: 2.5rem;"></i>
+                <h6 class="mt-2">آمار دقیق</h6>
+                <small class="text-muted">کلیک، دستگاه، مرورگر</small>
+            </div>
+            <div class="col-md-4 text-center">
+                <i class="bi bi-qr-code text-info" style="font-size: 2.5rem;"></i>
+                <h6 class="mt-2">QR Code</h6>
+                <small class="text-muted">خودکار ساخته میشه</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

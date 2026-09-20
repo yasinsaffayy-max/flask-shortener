@@ -1,0 +1,69 @@
+body {
+    font-family: 'Vazirmatn', -apple-system, sans-serif;
+    background-color: #f0f4f8;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+[data-bs-theme="dark"] body {
+    background-color: #1a1d21;
+}
+
+.form-control, .form-select {
+    border-radius: 10px;
+    padding: 0.6rem 1rem;
+}
+
+.input-group-lg .form-control {
+    font-size: 1.05rem;
+}
+
+.btn {
+    border-radius: 10px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #0d6efd, #0a58ca);
+    border: none;
+}
+.btn-primary:hover {
+    background: linear-gradient(135deg, #0a58ca, #084298);
+    transform: translateY(-1px);
+    transition: all 0.2s;
+}
+
+.card {
+    border-radius: 16px;
+}
+
+.alert {
+    border-radius: 12px;
+    border: none;
+}
+
+.table {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+}
+[data-bs-theme="dark"] .table {
+    background: #2a2d31;
+    color: #e0e0e0;
+}
+[data-bs-theme="dark"] .table-light {
+    background: #35383c;
+    color: #e0e0e0;
+}
+[data-bs-theme="dark"] .table-hover tbody tr:hover {
+    background: #35383c;
+}
+
+.text-break {
+    word-break: break-all;
+}
+
+.display-3 {
+    background: linear-gradient(135deg, #0d6efd, #6ea8fe);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}

@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <h2 class="fw-bold mb-0"><i class="bi bi-speedometer2"></i> داشبورد</h2>
+    <a href="{{ url_for('main.home') }}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> لینک جدید
+    </a>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="card bg-primary text-white shadow-sm">
+            <div class="card-body text-center">
+                <i class="bi bi-link-45deg" style="font-size: 2rem;"></i>
+                <h3 class="mt-2 mb-0">{{ total_links }}</h3>
+                <small>لینک ساخته شده</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card bg-success text-white shadow-sm">
+            <div class="card-body text-center">
+                <i class="bi bi-graph-up-arrow" style="font-size: 2rem;"></i>
+                <h3 class="mt-2 mb-0">{{ "{:,}".format(total_clicks) }}</h3>
+                <small>کلیک کل</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if links.items %}
+    <div class="table-responsive">
+        <table class="table table-hover align-middle bg-white">
+            <thead class="table-light">
+                <tr><th>کد</th><th>عنوان/لینک</th><th>کلیک</th><th>وضعیت</th><th>تاریخ</th><th>عملیات</th></tr>
+            </thead>
+            <tbody>
+                {% for link in links.items %}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('link.detail', code=link.short_code) }}" class="badge bg-primary text-decoration-none">
+                                {{ link.short_code }}
+                            </a>
+                        </td>
+                        <td>
+                            {% if link.title %}<strong>{{ link.title }}</strong><br>{% endif %}
+                            <small class="text-muted">{{ link.original_url[:50] }}{% if link.original_url|length > 50 %}...{% endif %}</small>
+                        </td>
+                        <td><span class="badge bg-info">{{ link.clicks_count }}</span></td>
+                        <td>
+                            {% if link.is_expired() %}
+                                <span class="badge bg-danger">منقضی</span>
+                            {% elif link.is_active %}
+                                <span class="badge bg-success">فعال</span>
+                            {% else %}
+                                <span class="badge bg-secondary">غیرفعال</span>
+                            {% endif %}
+                        </td>
+                        <td><small>{{ link.created_at.strftime('%Y-%m-%d') }}</small></td>
+                        <td>
+                            <a href="{{ url_for('link.detail', code=link.short_code) }}" class="btn btn-sm btn-outline-info" title="آمار"><i class="bi bi-bar-chart"></i></a>
+                            <a href="{{ url_for('link.toggle', lid=link.id) }}" class="btn btn-sm btn-outline-warning" title="تغییر وضعیت"><i class="bi bi-power"></i></a>
+                            <form method="POST" action="{{ url_for('link.delete', lid=link.id) }}" onsubmit="return confirm('حذف شود؟')" class="d-inline">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if links.pages > 1 %}
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if links.has_prev %}
+                    <li class="page-item"><a class="page-link" href="{{ url_for('link.dashboard', page=links.prev_num) }}">قبلی</a></li>
+                {% endif %}
+                {% for p in links.iter_pages() %}
+                    {% if p %}
+                        <li class="page-item {{ 'active' if p == links.page }}"><a class="page-link" href="{{ url_for('link.dashboard', page=p) }}">{{ p }}</a></li>
+                    {% else %}<li class="page-item disabled"><span class="page-link">...</span></li>{% endif %}
+                {% endfor %}
+                {% if links.has_next %}
+                    <li class="page-item"><a class="page-link" href="{{ url_for('link.dashboard', page=links.next_num) }}">بعدی</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+
+{% else %}
+    <div class="text-center py-5">
+        <i class="bi bi-link" style="font-size: 4rem; color: #ccc;"></i>
+        <h5 class="mt-3 text-muted">هنوز لینکی نساختی</h5>
+        <a href="{{ url_for('main.home') }}" class="btn btn-primary mt-2">اولین لینک رو بساز</a>
+    </div>
+{% endif %}
+{% endblock %}

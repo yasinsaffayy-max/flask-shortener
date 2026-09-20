@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<a href="{{ url_for('link.dashboard') }}" class="btn btn-sm btn-outline-secondary mb-3">
+    <i class="bi bi-arrow-right"></i> بازگشت به داشبورد
+</a>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h3 class="fw-bold">
+                    {{ link.title or 'بدون عنوان' }}
+                    <span class="badge bg-primary">{{ link.short_code }}</span>
+                </h3>
+                <p class="text-muted mb-2 text-break">
+                    <i class="bi bi-arrow-left-short"></i> {{ link.original_url }}
+                </p>
+                <div class="input-group">
+                    <input type="text" id="short-url" class="form-control" value="{{ config.BASE_URL }}/{{ link.short_code }}" readonly>
+                    <button class="btn btn-primary" onclick="copyShort()"><i class="bi bi-clipboard"></i> کپی</button>
+                </div>
+            </div>
+            <div class="col-md-4 text-center">
+                {% if qr_exists %}
+                    <img src="{{ url_for('static', filename='qrcodes/' + qr_filename) }}" style="max-width: 150px; border-radius: 10px;">
+                    <br>
+                    <a href="{{ url_for('static', filename='qrcodes/' + qr_filename) }}" download class="btn btn-sm btn-outline-primary mt-2">
+                        <i class="bi bi-download"></i> دانلود QR
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- آمار کلی -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card bg-primary text-white text-center">
+            <div class="card-body">
+                <h4 class="mb-0">{{ stats.total }}</h4>
+                <small>کل کلیک‌ها</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-success text-white text-center">
+            <div class="card-body">
+                <h4 class="mb-0">{{ stats.today }}</h4>
+                <small>امروز</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-info text-white text-center">
+            <div class="card-body">
+                <h4 class="mb-0">{{ stats.week }}</h4>
+                <small>۷ روز اخیر</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- نمودار -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <h5 class="fw-bold mb-3">📈 کلیک‌های ۷ روز اخیر</h5>
+        <canvas id="clicksChart" style="max-height: 300px;"></canvas>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <!-- دستگاه‌ها -->
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6 class="fw-bold mb-3">📱 دستگاه‌ها</h6>
+                {% if device_stats %}
+                    {% for device, count in device_stats.items() %}
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>
+                                {% if device == 'mobile' %}<i class="bi bi-phone"></i> موبایل
+                                {% elif device == 'pc' %}<i class="bi bi-laptop"></i> کامپیوتر
+                                {% elif device == 'tablet' %}<i class="bi bi-tablet"></i> تبلت
+                                {% else %}<i class="bi bi-question-circle"></i> {{ device }}{% endif %}
+                            </span>
+                            <strong>{{ count }}</strong>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted small">داده‌ای نیست</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <!-- مرورگرها -->
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6 class="fw-bold mb-3">🌐 مرورگرها</h6>
+                {% if browser_stats %}
+                    {% for browser, count in browser_stats.items() %}
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>{{ browser }}</span>
+                            <strong>{{ count }}</strong>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted small">داده‌ای نیست</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- آخرین کلیک‌ها -->
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h6 class="fw-bold mb-3">🕐 آخرین کلیک‌ها (۱۰۰ مورد آخر)</h6>
+        {% if clicks %}
+            <div class="table-responsive">
+                <table class="table table-sm">
+                    <thead class="table-light">
+                        <tr><th>#</th><th>زمان</th><th>دستگاه</th><th>مرورگر</th><th>IP</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for c in clicks %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td><small>{{ c.clicked_at.strftime('%Y-%m-%d %H:%M') }}</small></td>
+                                <td><small>{{ c.device or '—' }}</small></td>
+                                <td><small>{{ c.browser or '—' }}</small></td>
+                                <td><small class="text-muted">{{ c.ip_address or '—' }}</small></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-muted small">هنوز کلیکی ثبت نشده</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+const ctx = document.getElementById('clicksChart');
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: {{ chart_data | map(attribute='label') | list | tojson }},
+        datasets: [{
+            label: 'کلیک',
+            data: {{ chart_data | map(attribute='value') | list | tojson }},
+            borderColor: '#0d6efd',
+            backgroundColor: 'rgba(13, 110, 253, 0.1)',
+            tension: 0.4,
+            fill: true,
+            pointBackgroundColor: '#0d6efd',
+            pointRadius: 5,
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            y: { beginAtZero: true, ticks: { precision: 0 } }
+        }
+    }
+});
+
+function copyShort() {
+    const inp = document.getElementById('short-url');
+    inp.select();
+    document.execCommand('copy');
+    alert('لینک کپی شد!');
+}
+</script>
+{% endblock %}

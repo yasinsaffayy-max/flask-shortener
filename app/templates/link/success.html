@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4 text-center">
+                <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+                <h3 class="fw-bold mt-3">لینک کوتاه ساخته شد!</h3>
+                <p class="text-muted">{{ link.original_url }}</p>
+
+                <div class="input-group input-group-lg my-4">
+                    <input type="text" id="short-url" class="form-control text-center fw-bold"
+                           value="{{ config.BASE_URL }}/{{ link.short_code }}" readonly>
+                    <button class="btn btn-primary" onclick="copyShort()">
+                        <i class="bi bi-clipboard"></i> کپی
+                    </button>
+                </div>
+
+                {% if qr_exists %}
+                    <div class="text-center mb-3">
+                        <img src="{{ url_for('static', filename='qrcodes/' + qr_filename) }}" style="max-width: 180px; border-radius: 12px;">
+                    </div>
+                {% endif %}
+
+                <div class="alert alert-info small">
+                    <i class="bi bi-info-circle"></i> برای دیدن آمار این لینک، <a href="{{ url_for('auth.register') }}">ثبت‌نام</a> کن.
+                </div>
+
+                <a href="{{ url_for('main.home') }}" class="btn btn-outline-secondary">لینک جدید</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function copyShort() {
+    const inp = document.getElementById('short-url');
+    inp.select();
+    document.execCommand('copy');
+    alert('لینک کوتاه کپی شد!');
+}
+</script>
+{% endblock %}
