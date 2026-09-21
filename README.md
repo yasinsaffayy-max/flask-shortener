@@ -1,4 +1,3 @@
-
 # 🔗 Sho.rt — کوتاه‌کننده لینک با آمار کامل
 
 [![Tests](https://github.com/yasinsaffayy-max/flask-shortener/actions/workflows/tests.yml/badge.svg)](https://github.com/yasinsaffayy-max/flask-shortener/actions)
