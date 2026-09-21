@@ -1,3 +1,5 @@
+
+:
 name: Tests
 
 on:
@@ -10,17 +12,13 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        python-version: ["3.13"]
-
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python 3.13.13
       uses: actions/setup-python@v5
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: '3.13.13'
 
     - name: Install dependencies
       run: |
@@ -31,7 +29,3 @@ jobs:
     - name: Run tests with pytest
       run: |
         pytest --cov=app --cov-report=term-missing
-
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v4
-      continue-on-error: true
