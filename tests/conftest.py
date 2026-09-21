@@ -5,22 +5,31 @@ from app import create_app, db as _db
 from app.models import User, Link, Click
 
 
+# پوشه temp برای QR Codeها
+QRCODE_TMP = os.path.join(tempfile.gettempdir(), 'qrcodes_test')
+os.makedirs(QRCODE_TMP, exist_ok=True)
+
+
 class TestConfig:
     """کانفیگ مخصوص تست"""
     TESTING = True
-    WTF_CSRF_ENABLED = False  # CSRF رو خاموش کن تا راحت‌تر تست کنیم
-    SECRET_KEY = 'test-secret-key'
+    WTF_CSRF_ENABLED = False
+    SECRET_KEY = 'test-secret-key-for-ci'
     BASE_URL = 'http://localhost'
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'  # دیتابیس در حافظه
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'   # ← دیتابیس در حافظه
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    QRCODE_FOLDER = tempfile.mkdtemp()
+    QRCODE_FOLDER = QRCODE_TMP
 
 
 @pytest.fixture(scope='session')
 def app():
     """ساخت اپ برای همه تست‌ها"""
-    app = create_app('development')
-    app.config.from_object(TestConfig)
+    # کانفیگ تست رو به دیکشنری config اضافه کن
+    from config import config
+    config['test'] = TestConfig
+
+    # حالا با config درست، اپ رو بساز
+    app = create_app('test')
     with app.app_context():
         yield app
 
@@ -37,21 +46,16 @@ def db(app):
 
 @pytest.fixture
 def client(app, db):
-    """کلاینت تست"""
     return app.test_client()
 
 
 @pytest.fixture
 def runner(app):
-    """CLI runner"""
     return app.test_cli_runner()
 
 
-# ===== Fixtureهای داده =====
-
 @pytest.fixture
 def user(db):
-    """یه کاربر معمولی"""
     u = User(username='ali', email='ali@test.com')
     u.set_password('password123')
     db.session.add(u)
@@ -61,7 +65,6 @@ def user(db):
 
 @pytest.fixture
 def admin(db):
-    """یه ادمین"""
     u = User(username='admin', email='admin@test.com', is_admin=True)
     u.set_password('admin123')
     db.session.add(u)
@@ -71,7 +74,6 @@ def admin(db):
 
 @pytest.fixture
 def auth_client(client, user):
-    """کلاینت لاگین‌شده"""
     client.post('/auth/login', data={
         'username': 'ali',
         'password': 'password123'
@@ -81,7 +83,6 @@ def auth_client(client, user):
 
 @pytest.fixture
 def link(db, user):
-    """یه لینک نمونه"""
     l = Link(
         short_code='abc123',
         original_url='https://example.com',
