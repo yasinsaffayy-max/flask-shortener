@@ -3,6 +3,16 @@
 
 یه سرویس کوتاه‌کننده لینک حرفه‌ای با Flask — مثل bit.ly ولی ساده‌تر و با نمودارهای زیبا.
 
+# 🔗 Sho.rt — کوتاه‌کننده لینک با آمار کامل
+
+![Tests](https://github.com/yasinsaffayy-max/flask-shortener/actions/workflows/tests.yml/badge.svg)
+![Coverage](https://img.shields.io/badge/coverage-94%25-brightgreen)
+![Python](https://img.shields.io/badge/python-3.10%2B-blue)
+![Flask](https://img.shields.io/badge/flask-3.0-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+
+یه سرویس کوتاه‌کننده لینک حرفه‌ای با Flask
+
 ## ✨ امکانات
 
 - 🔗 **کوتاه‌سازی لینک** — هم برای کاربر لاگین‌کرده، هم مهمان
