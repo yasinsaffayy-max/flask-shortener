@@ -9,8 +9,6 @@
 ![Flask](https://img.shields.io/badge/flask-3.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-یه سرویس کوتاه‌کننده لینک حرفه‌ای با Flask
-
 ## ✨ امکانات
 
 - 🔗 **کوتاه‌سازی لینک** — هم برای کاربر لاگین‌کرده، هم مهمان
