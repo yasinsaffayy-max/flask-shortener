@@ -1,15 +1,13 @@
 
 # 🔗 Sho.rt — کوتاه‌کننده لینک با آمار کامل
 
-یه سرویس کوتاه‌کننده لینک حرفه‌ای با Flask — مثل bit.ly ولی ساده‌تر و با نمودارهای زیبا.
-
-![Tests](https://github.com/yasinsaffayy-max/flask-shortener/actions/workflows/tests.yml/badge.svg)
+[![Tests](https://github.com/yasinsaffayy-max/flask-shortener/actions/workflows/tests.yml/badge.svg)](https://github.com/yasinsaffayy-max/flask-shortener/actions)
 ![Coverage](https://img.shields.io/badge/coverage-94%25-brightgreen)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
 ![Flask](https://img.shields.io/badge/flask-3.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-یه سرویس کوتاه‌کننده لینک حرفه‌ای با Flask
+یه سرویس کوتاه‌کننده لینک حرفه‌ای با Flask — مثل bit.ly ولی ساده‌تر و با نمودارهای زیبا.
 
 ## ✨ امکانات
 
@@ -25,31 +23,47 @@
 - 👤 **احراز هویت** با Flask-Login
 - 📱 **کاملاً رسپانسیو**
 
-## 🛠 تکنولوژی‌ها
+## 🧪 تست‌ها
 
-| بخش | تکنولوژی |
-|-----|----------|
-| Backend | Flask 3, SQLAlchemy, Flask-Login, Flask-WTF |
-| Database | SQLite |
-| Frontend | Bootstrap 5 RTL, Chart.js, Vazirmatn |
-| Analytics | user-agents (تشخیص دستگاه) |
-| QR Code | qrcode + Pillow |
-
-## 🚀 نصب و اجرا
+این پروژه دارای **۵۱ تست خودکار** با پوشش **۹۴٪** است.
 
 ```bash
+pytest --cov=app --cov-report=term-missing
+```
+
+🛠 تکنولوژی‌ها
+
+بخش تکنولوژی
+Backend Flask 3, SQLAlchemy, Flask-Login, Flask-WTF
+Database SQLite
+Frontend Bootstrap 5 RTL, Chart.js, Vazirmatn
+Analytics user-agents (تشخیص دستگاه)
+QR Code qrcode + Pillow
+Testing pytest, pytest-flask, pytest-cov
+CI/CD GitHub Actions
+
+🚀 نصب و اجرا
+
+```bash
+# 1. کلون پروژه
 git clone https://github.com/yasinsaffayy-max/flask-shortener.git
 cd flask-shortener
 
+# 2. ساخت virtualenv
 python -m venv venv
 source venv/bin/activate  # ویندوز: venv\Scripts\activate
 
+# 3. نصب پکیج‌ها
 pip install -r requirements.txt
 
+# 4. ساخت فایل .env
 cp .env.example .env
 # مقدار SECRET_KEY رو ویرایش کن
 
+# 5. ساخت دیتابیس
 python init_db.py
+
+# 6. اجرا
 python run.py
 ```
 
@@ -59,6 +73,8 @@ python run.py
 
 · Username: admin
 · Password: admin123
+
+⚠️ بعد از اولین ورود، رمز رو تغییر بده!
 
 📡 API
 
@@ -110,9 +126,12 @@ flask-shortener/
 │   ├── templates/
 │   └── static/
 │       └── qrcodes/         # QR Codeها
+├── tests/                   # ۵۱ تست pytest
+├── .github/workflows/       # GitHub Actions
 ├── config.py
 ├── run.py
 ├── init_db.py
+├── pytest.ini
 └── requirements.txt
 ```
 
